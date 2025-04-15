@@ -1,0 +1,10 @@
+bin/
+include/
+lib/
+lib64/
+pyvenv.cfg
+__pycache__/
+*.pyc
+*.sqlite3
+*.log
+.env
