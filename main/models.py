@@ -1,27 +1,26 @@
 from django.db import models
 
-
-class Category (models.Model):
-    name = models.CharField(max_length=200)
+class BaseModel(models.Model):
     slug = models.SlugField(max_length=200, blank=True)
-
-    class Meta:
-        ordering = ["name"]
-        indexes = [
-            models.Index(fields=["name"])
-        ]
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-         self.slug = self.name.lower().replace(" ", "-")
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.name
-
-class Hub (models.Model):
     name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200,blank=True )
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+         self.slug = self.name.lower().replace(" ", "-")
+        super().save(*args, **kwargs)
+
+
+class Category(BaseModel):
+    name = models.CharField(max_length=45)
 
     class Meta:
         ordering = ["name"]
@@ -29,25 +28,17 @@ class Hub (models.Model):
             models.Index(fields=["name"])
         ]
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-         self.slug = self.name.lower().replace(" ", "-")
-        super().save(*args, **kwargs)
+class Hub(BaseModel):
+    name = models.CharField(max_length=45)
 
-    def __str__(self):
-        return self.name
+    class Meta:
+        ordering = ["name"]
+        indexes = [
+            models.Index(fields=["name"])
+        ]
     
 
-class Product (models.Model):
-    name = models.CharField(max_length=200)
+class Product(BaseModel):
     category = models.ManyToManyField(Category, blank=True)
     hub =  models.ManyToManyField(Hub, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    created =  models.DateField(auto_now=True)
-    updated = models.DateField(auto_now_add=True)
-    slug = models.SlugField(max_length=200, blank=True)
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-         self.slug = self.name.lower().replace(" ", "-")
-        super().save(*args, **kwargs)
