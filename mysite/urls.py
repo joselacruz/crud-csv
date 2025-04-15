@@ -20,7 +20,7 @@ from django.shortcuts import redirect, render
 
 
 
-def home():
+def home(request):
     return redirect('main:products_list')
 
 
