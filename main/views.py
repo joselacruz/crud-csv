@@ -5,33 +5,50 @@ from .models import Product , Category, Hub
 import csv
 
 def products_list(request):
-    if request.GET.get('export') == 'csv':
-       
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="products.csv"'
+    search = request.GET.get('search')
+    selected_hub = request.GET.get('hub')
+    selected_category = request.GET.get('category')
+    form_action = request.GET.get('form_action')
+
+    # Obtener productos con sus categorías y hubs
+    products = Product.objects.all().prefetch_related('category', 'hub')
+    
+    # Filtrar productos por busqueda, hub y categoría
+    if search and search != "":
+        products = products.filter(name__icontains=search) 
+    if selected_hub and selected_hub.isdigit():
+        products = products.filter(hub=selected_hub)
+    if selected_category and selected_category.isdigit():
+        products = products.filter(category=selected_category)
+
+    # Si se ha seleccionado exportar a CSV
+    if form_action == 'csv-export':
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="products.csv"'
 
         # Definir encabezados
-        fieldnames = ['name', 'categorys', 'hubs', 'price']
-        writer = csv.DictWriter(response, fieldnames=fieldnames)
-        writer.writeheader()
-
-        # Obtener productos con sus categorías y hubs
-        products = Product.objects.all().prefetch_related('category', 'hub')
+            fieldnames = ['name', 'categorys', 'hubs', 'price']
+            writer = csv.DictWriter(response, fieldnames=fieldnames)
+            writer.writeheader()
         
         # Esxpedir productos en el CSV
-        for product in products:
-            writer.writerow({
+            for product in products:
+                writer.writerow({
                 'name': product.name,
                 'categorys': '|'.join(cat.name for cat in product.category.all()),
                 'hubs': '|'.join(hub.name for hub in product.hub.all()),
                 'price': product.price
-            })
+                })
         
-        return response 
+            return response 
 
-    #  si no es un export, mostrar la lista de productos
-    products = Product.objects.all().prefetch_related('category', 'hub')
-    return render(request, 'products_list.html', {'products': products})
+    return render(request, 'products_list.html', {
+        'products': products,
+        'hubs': Hub.objects.all(),
+        'categories': Category.objects.all(),
+        'selected_category': selected_category,
+        'selected_hub': selected_hub 
+    })
 
 def products_upload(request):
     errors = []

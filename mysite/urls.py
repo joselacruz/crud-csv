@@ -27,5 +27,5 @@ def home(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
-    path('', include('main.urls')),
+    path('', include('main.urls'), name='main'),
 ]

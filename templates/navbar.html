@@ -1,5 +1,5 @@
-<nav class="border-b bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 py-6">
+<nav class="border-b bg-gray-50 flex justify-between items-center  px-20 py-6">
+    <div>
         <div class="flex items-center justify-between h-14">
             <a href="{% url 'main:products_list' %}" class="text-xl font-semibold flex items-center gap-2">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -9,5 +9,16 @@
                 CSV CRUD
             </a>
         </div>
+    </div>
+
+    <div>
+        <a href="{% url 'main:products_upload' %}"
+            class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200 ease-in-out">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            Subir CSV
+        </a>
     </div>
 </nav>
